@@ -69,6 +69,20 @@ func TestDB_DriverName(t *testing.T) {
 	assert.Equal(t, "mysql", db.DriverName())
 }
 
+func TestDB_Unwrap(t *testing.T) {
+	unwrapped, ok := getDB().Unwrap().(*DB)
+	assert.True(t, ok)
+	assert.NotNil(t, unwrapped)
+
+	unwrapped.Transactional(func(tx *Tx) error {
+		unwrapped, ok := tx.Unwrap().(*Tx)
+		assert.True(t, ok)
+		assert.NotNil(t, unwrapped)
+
+		return nil
+	})
+}
+
 func TestDB_QuoteTableName(t *testing.T) {
 	tests := []struct {
 		input, output string
